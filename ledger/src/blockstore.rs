@@ -2428,10 +2428,22 @@ impl Blockstore {
             ("method", "get_confirmed_signatures_for_address2", String)
         );
         let last_root = self.last_root();
+        warn!(
+                        "--------------------LOG----------------------, \
+                        last_root: {:?}, \
+                        highest_slot: {:?} \
+                        --------------------LOG----------------------" ,
+                        last_root, highest_slot,
+                    );
         let confirmed_unrooted_slots: Vec<_> = AncestorIterator::new_inclusive(highest_slot, self)
             .take_while(|&slot| slot > last_root)
             .collect();
-
+        warn!(
+                        "--------------------LOG----------------------, \
+                        confirmed_unrooted_slots: {:?}, \
+                        --------------------LOG----------------------" ,
+                        confirmed_unrooted_slots,
+                    );
         // Figure the `slot` to start listing signatures at, based on the ledger location of the
         // `before` signature if present.  Also generate a HashSet of signatures that should
         // be excluded from the results.

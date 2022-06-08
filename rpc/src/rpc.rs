@@ -1067,7 +1067,7 @@ impl JsonRpcRequestProcessor {
                 max_supported_transaction_version: config.max_supported_transaction_version,
             };
             let commitment = config.commitment.unwrap_or_default();
-            check_is_at_least_confirmed(commitment)?;
+            // check_is_at_least_confirmed(commitment)?;
 
             // Block is old enough to be finalized
             if slot
@@ -1149,7 +1149,7 @@ impl JsonRpcRequestProcessor {
         commitment: Option<CommitmentConfig>,
     ) -> Result<Vec<Slot>> {
         let commitment = commitment.unwrap_or_default();
-        check_is_at_least_confirmed(commitment)?;
+        // check_is_at_least_confirmed(commitment)?;
 
         let highest_confirmed_root = self
             .block_commitment_cache
@@ -1233,7 +1233,7 @@ impl JsonRpcRequestProcessor {
         commitment: Option<CommitmentConfig>,
     ) -> Result<Vec<Slot>> {
         let commitment = commitment.unwrap_or_default();
-        check_is_at_least_confirmed(commitment)?;
+        // check_is_at_least_confirmed(commitment)?;
 
         if limit > MAX_GET_CONFIRMED_BLOCKS_RANGE as usize {
             return Err(Error::invalid_params(format!(
@@ -1465,7 +1465,7 @@ impl JsonRpcRequestProcessor {
         let encoding = config.encoding.unwrap_or(UiTransactionEncoding::Json);
         let max_supported_transaction_version = config.max_supported_transaction_version;
         let commitment = config.commitment.unwrap_or_default();
-        check_is_at_least_confirmed(commitment)?;
+        // check_is_at_least_confirmed(commitment)?;
 
         if self.config.enable_rpc_transaction_history {
             let confirmed_bank = self.bank(Some(CommitmentConfig::confirmed()));
@@ -1558,7 +1558,7 @@ impl JsonRpcRequestProcessor {
         config: RpcContextConfig,
     ) -> Result<Vec<RpcConfirmedTransactionStatusWithSignature>> {
         let commitment = config.commitment.unwrap_or_default();
-        check_is_at_least_confirmed(commitment)?;
+        // check_is_at_least_confirmed(commitment)?;
 
         if self.config.enable_rpc_transaction_history {
             let highest_confirmed_root = self

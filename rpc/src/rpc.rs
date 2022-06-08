@@ -1576,7 +1576,7 @@ impl JsonRpcRequestProcessor {
                 if commitment.is_confirmed() {
                     confirmed_bank.slot()
                 } else {
-                    confirmed_bank.slot().add(5)
+                    confirmed_bank.slot().add(10)
                 }
             } else {
                 let min_context_slot = config.min_context_slot.unwrap_or_default();

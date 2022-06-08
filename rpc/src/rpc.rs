@@ -1,5 +1,6 @@
 //! The `rpc` module implements the Solana RPC interface.
 
+use std::ops::Add;
 use {
     crate::{
         max_slots::MaxSlots, optimistically_confirmed_bank_tracker::OptimisticallyConfirmedBank,
@@ -1571,7 +1572,7 @@ impl JsonRpcRequestProcessor {
                 if commitment.is_confirmed() {
                     confirmed_bank.slot()
                 } else {
-                    confirmed_bank.slot().checked_add(5)
+                    confirmed_bank.slot().add(5)
                 }
             } else {
                 let min_context_slot = config.min_context_slot.unwrap_or_default();

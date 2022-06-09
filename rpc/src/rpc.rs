@@ -1,15 +1,12 @@
 //! The `rpc` module implements the Solana RPC interface.
 
 use std::ops::Add;
-extern crate futures;
-
-use futures::future;
+use futures::future::join_all;
 use {
     crate::{
         max_slots::MaxSlots, optimistically_confirmed_bank_tracker::OptimisticallyConfirmedBank,
         parsed_token_accounts::*, rpc_health::*,
     },
-    futures::future,
     bincode::{config::Options, serialize},
     crossbeam_channel::{unbounded, Receiver, Sender},
     jsonrpc_core::{futures::future, types::error, BoxFuture, Error, Metadata, Result},
@@ -3957,7 +3954,7 @@ pub mod rpc_full {
                         )
                         .await;
 
-                    let transactions:Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>> = feature::try_join_all(
+                    let transactions:Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>> = join_all(
                         signatures
                             .unwrap()
                             .iter()

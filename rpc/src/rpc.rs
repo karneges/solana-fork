@@ -3887,95 +3887,95 @@ pub mod rpc_full {
             Box::pin(async move { meta.get_transaction(signature.unwrap(), config).await })
         }
 
-        // fn get_signatures_for_address(
-        //     &self,
-        //     meta: Self::Metadata,
-        //     address: String,
-        //     config: Option<RpcSignaturesForAddressConfig>,
-        // ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>> {
-        //     let RpcSignaturesForAddressConfig {
-        //         before,
-        //         until,
-        //         limit,
-        //         commitment,
-        //         min_context_slot,
-        //     } = config.unwrap_or_default();
-        //     let verification =
-        //         verify_and_parse_signatures_for_address_params(address, before, until, limit);
-        //
-        //     match verification {
-        //         Err(err) => Box::pin(future::err(err)),
-        //         Ok((address, before, until, limit)) => Box::pin(async move {
-        //             meta.get_signatures_for_address(
-        //                 address,
-        //                 before,
-        //                 until,
-        //                 limit,
-        //                 RpcContextConfig {
-        //                     commitment,
-        //                     min_context_slot,
-        //                 },
-        //             )
-        //             .await
-        //         }),
-        //     }
-        // }
-        fn get_transaction_for_address(
+        fn get_signatures_for_address(
             &self,
             meta: Self::Metadata,
             address: String,
-            config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
-        ) -> BoxFuture<Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>> {
-            let RpcTransactionsForAddressConfig {
+            config: Option<RpcSignaturesForAddressConfig>,
+        ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>> {
+            let RpcSignaturesForAddressConfig {
                 before,
                 until,
                 limit,
                 commitment,
                 min_context_slot,
-                max_supported_transaction_version,
-                encoding,
             } = config.unwrap_or_default();
             let verification =
                 verify_and_parse_signatures_for_address_params(address, before, until, limit);
-            match verification {
-                // Err(err) => Box::pin(future::err(err)),
-                Ok((address, before, until, limit)) => Box::pin(async move {
-                    let signatures = meta
-                        .get_signatures_for_address(
-                            address,
-                            before,
-                            until,
-                            limit,
-                            RpcContextConfig {
-                                commitment,
-                                min_context_slot,
-                            },
-                        )
-                        .await;
 
-                    let transactions:Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>> = signatures
-                        .unwrap()
-                        .iter()
-                        .map(|s| async {
-                            let verif = verify_signature(&s.signature);
-                            let transaction = meta
-                                .get_transaction(
-                                    verif.unwrap(),
-                                    Some(RpcEncodingConfigWrapper::from(RpcTransactionConfig {
-                                        max_supported_transaction_version,
-                                        encoding,
-                                        commitment,
-                                    })),
-                                )
-                                .await;
-                            transaction.unwrap()
-                        })
-                        .collect();
-                    transactions
+            match verification {
+                Err(err) => Box::pin(future::err(err)),
+                Ok((address, before, until, limit)) => Box::pin(async move {
+                    meta.get_signatures_for_address(
+                        address,
+                        before,
+                        until,
+                        limit,
+                        RpcContextConfig {
+                            commitment,
+                            min_context_slot,
+                        },
+                    )
+                    .await
                 }),
-                _ => {}
             }
         }
+        // fn get_transaction_for_address(
+        //     &self,
+        //     meta: Self::Metadata,
+        //     address: String,
+        //     config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
+        // ) -> BoxFuture<Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>> {
+        //     let RpcTransactionsForAddressConfig {
+        //         before,
+        //         until,
+        //         limit,
+        //         commitment,
+        //         min_context_slot,
+        //         max_supported_transaction_version,
+        //         encoding,
+        //     } = config.unwrap_or_default();
+        //     let verification =
+        //         verify_and_parse_signatures_for_address_params(address, before, until, limit);
+        //     match verification {
+        //         // Err(err) => Box::pin(future::err(err)),
+        //         Ok((address, before, until, limit)) => Box::pin(async move {
+        //             let signatures = meta
+        //                 .get_signatures_for_address(
+        //                     address,
+        //                     before,
+        //                     until,
+        //                     limit,
+        //                     RpcContextConfig {
+        //                         commitment,
+        //                         min_context_slot,
+        //                     },
+        //                 )
+        //                 .await;
+        //
+        //             let transactions:Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>> = signatures
+        //                 .unwrap()
+        //                 .iter()
+        //                 .map(|s| async {
+        //                     let verif = verify_signature(&s.signature);
+        //                     let transaction = meta
+        //                         .get_transaction(
+        //                             verif.unwrap(),
+        //                             Some(RpcEncodingConfigWrapper::from(RpcTransactionConfig {
+        //                                 max_supported_transaction_version,
+        //                                 encoding,
+        //                                 commitment,
+        //                             })),
+        //                         )
+        //                         .await;
+        //                     transaction.unwrap()
+        //                 })
+        //                 .collect();
+        //             transactions
+        //         }),
+        //         _ => {}
+        //     }
+        // }
 
         fn get_first_available_block(&self, meta: Self::Metadata) -> BoxFuture<Result<Slot>> {
             debug!("get_first_available_block rpc request received");

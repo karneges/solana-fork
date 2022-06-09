@@ -3384,7 +3384,7 @@ pub mod rpc_full {
             &self,
             meta: Self::Metadata,
             address: String,
-            config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
+            config: Option<RpcTransactionsForAddressConfig>,
         ) -> BoxFuture<Vec<Option<EncodedConfirmedTransactionWithStatusMeta>>>;
 
         #[rpc(meta, name = "getFirstAvailableBlock")]
@@ -3952,8 +3952,8 @@ pub mod rpc_full {
                             until,
                             limit,
                             RpcContextConfig {
-                                commitment,
-                                min_context_slot,
+                                commitment:unwrapped.commitment,
+                                min_context_slot:unwrapped.min_context_slot,
                             },
                         )
 

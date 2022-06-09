@@ -5,7 +5,9 @@ use {
     crate::{
         max_slots::MaxSlots, optimistically_confirmed_bank_tracker::OptimisticallyConfirmedBank,
         parsed_token_accounts::*, rpc_health::*,
+        futures
     },
+    futures::future,
     bincode::{config::Options, serialize},
     crossbeam_channel::{unbounded, Receiver, Sender},
     jsonrpc_core::{futures::future, types::error, BoxFuture, Error, Metadata, Result},
@@ -3953,25 +3955,26 @@ pub mod rpc_full {
                         )
                         .await;
 
-                    let transactions:Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>> = signatures
-                        .unwrap()
-                        .iter()
-                        .map(|s| async {
-                            let verif = verify_signature(&s.signature);
-                            let transaction = meta
-                                .get_transaction(
-                                    verif.unwrap(),
-                                    Some(RpcEncodingConfigWrapper::from(RpcTransactionConfig {
-                                        max_supported_transaction_version,
-                                        encoding,
-                                        commitment,
-                                    })),
-                                )
-                                .await;
-                            transaction.unwrap()
-                        })
-                        .collect::<Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>>().try_into()
-                        .unwrap();
+                    let transactions:Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>> = feature::try_join_all(
+                        signatures
+                            .unwrap()
+                            .iter()
+                            .map(|s| async {
+                                let verif = verify_signature(&s.signature);
+                                let transaction = meta
+                                    .get_transaction(
+                                        verif.unwrap(),
+                                        Some(RpcEncodingConfigWrapper::from(RpcTransactionConfig {
+                                            max_supported_transaction_version,
+                                            encoding,
+                                            commitment,
+                                        })),
+                                    )
+                                    .await;
+                                transaction.unwrap()
+                            })
+
+                    ).await.unwrap();
                     transactions
                 }),
                 _ => {}

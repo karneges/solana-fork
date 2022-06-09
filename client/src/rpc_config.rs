@@ -215,6 +215,7 @@ pub struct RpcSignaturesForAddressConfig {
     pub min_context_slot: Option<Slot>,
 }
 
+
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RpcTransactionsForAddressConfig {

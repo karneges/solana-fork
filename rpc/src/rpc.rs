@@ -3925,20 +3925,21 @@ pub mod rpc_full {
             &self,
             meta: Self::Metadata,
             address: String,
-            config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
+            config: Option<RpcTransactionsForAddressConfig>,
         ) -> BoxFuture<Vec<Option<EncodedConfirmedTransactionWithStatusMeta>>> {
            let default:Vec<Option<EncodedConfirmedTransactionWithStatusMeta>> = vec![];
-            let RpcTransactionsForAddressConfig {
-                before,
-                until,
-                limit,
-                commitment,
-                min_context_slot,
-                max_supported_transaction_version,
-                encoding,
-            } = config.unwrap_or_default();
+            // let RpcTransactionsForAddressConfig {
+            //     before,
+            //     until,
+            //     limit,
+            //     commitment,
+            //     min_context_slot,
+            //     max_supported_transaction_version,
+            //     encoding,
+            // } = config.unwrap_or_default();
+            let unwrapped = config.unwrap();
             let verification =
-                verify_and_parse_signatures_for_address_params(address, before, until, limit);
+                verify_and_parse_signatures_for_address_params(address, unwrapped.before, unwrapped.until, unwrapped.limit);
             match verification {
                 Err(err) => Box::pin(async{
                     default
@@ -3968,9 +3969,9 @@ pub mod rpc_full {
                                     .get_transaction(
                                         verif.unwrap(),
                                         Some(RpcEncodingConfigWrapper::from(RpcTransactionConfig {
-                                            max_supported_transaction_version,
-                                            encoding,
-                                            commitment,
+                                            max_supported_transaction_version:unwrapped.max_supported_transaction_version,
+                                            encoding:unwrapped.encoding,
+                                            commitment:unwrapped.commitment,
                                         })),
                                     )
                                     .await;

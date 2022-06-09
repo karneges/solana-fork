@@ -3940,7 +3940,9 @@ pub mod rpc_full {
             let verification =
                 verify_and_parse_signatures_for_address_params(address, before, until, limit);
             match verification {
-                Err(err) => default,
+                Err(err) => Box::pin({
+                    default
+                                     }),
                 Ok((address, before, until, limit)) => Box::pin(async move {
                     let signatures = meta
                         .get_signatures_for_address(

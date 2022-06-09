@@ -1469,14 +1469,14 @@ impl JsonRpcRequestProcessor {
         // check_is_at_least_confirmed(commitment)?;
 
         if self.config.enable_rpc_transaction_history {
-            let confirmed_transaction = match commitment {
-                CommitmentConfig::processed() => {
+            let confirmed_transaction = match commitment.commitment {
+                CommitmentLevel::Processed => {
                     let processed_bank = self.bank(Some(CommitmentConfig::processed()));
                     let highest_process_slot = processed_bank.slot();
                     self.blockstore
                         .get_complete_transaction(signature, highest_process_slot)
                 }
-                CommitmentConfig::confirmed() => {
+                CommitmentLevel::Confirmed => {
                     let confirmed_bank = self.bank(Some(CommitmentConfig::confirmed()));
                         let highest_confirmed_slot = confirmed_bank.slot();
                         self.blockstore

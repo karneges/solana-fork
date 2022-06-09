@@ -1469,24 +1469,38 @@ impl JsonRpcRequestProcessor {
         // check_is_at_least_confirmed(commitment)?;
 
         if self.config.enable_rpc_transaction_history {
-            let confirmed_bank = self.bank(Some(CommitmentConfig::confirmed()));
-            let confirmed_transaction = if commitment.is_confirmed() || commitment.is_processed() {
-                if commitment.is_confirmed() {
-                    let highest_confirmed_slot = confirmed_bank.slot();
+            let confirmed_transaction = match commitment {
+                CommitmentConfig::processed() => {
+                    let processed_bank = self.bank(Some(CommitmentConfig::processed()));
+                    let highest_process_slot = processed_bank.slot();
                     self.blockstore
-                        .get_complete_transaction(signature, highest_confirmed_slot)
-                } else {
-                    let highest_confirmed_slot =  self.get_slot(RpcContextConfig{
-                        commitment:Some(CommitmentConfig::processed()),
-                        min_context_slot:None
-                    }).unwrap();
-                    self.blockstore
-                        .get_complete_transaction(signature, highest_confirmed_slot)
+                        .get_complete_transaction(signature, highest_process_slot)
                 }
-
-            } else {
-                self.blockstore.get_rooted_transaction(signature)
+                CommitmentConfig::confirmed() => {
+                    let confirmed_bank = self.bank(Some(CommitmentConfig::confirmed()));
+                        let highest_confirmed_slot = confirmed_bank.slot();
+                        self.blockstore
+                            .get_complete_transaction(signature, highest_confirmed_slot)
+                }
+                _ => {
+                    self.blockstore.get_rooted_transaction(signature)
+                }
             };
+            // let confirmed_transaction = if commitment.is_processed() {
+            //     let processed_bank = self.bank(Some(CommitmentConfig::processed()));
+            //     let highest_process_slot = processed_bank.slot();
+            //     self.blockstore
+            //         .get_complete_transaction(signature, highest_process_slot)
+            // } else {
+            //     let confirmed_bank = self.bank(Some(CommitmentConfig::confirmed()));
+            //     if commitment.is_confirmed() {
+            //         let highest_confirmed_slot = confirmed_bank.slot();
+            //         self.blockstore
+            //             .get_complete_transaction(signature, highest_confirmed_slot)
+            //     } else {
+            //         self.blockstore.get_rooted_transaction(signature)
+            //     };
+            // };
 
             let encode_transaction =
                 |confirmed_tx_with_meta: ConfirmedTransactionWithStatusMeta| -> Result<EncodedConfirmedTransactionWithStatusMeta> {
@@ -1495,10 +1509,10 @@ impl JsonRpcRequestProcessor {
 
             match confirmed_transaction.unwrap_or(None) {
                 Some(mut confirmed_transaction) => {
-                    if (commitment.is_confirmed() || commitment.is_processed())
-                        && confirmed_bank // should be redundant
-                            .status_cache_ancestors()
-                            .contains(&confirmed_transaction.slot)
+                    if commitment.is_confirmed() || commitment.is_processed()
+                        // && confirmed_bank // should be redundant
+                        //     .status_cache_ancestors()
+                        //     .contains(&confirmed_transaction.slot)
                     {
                         if confirmed_transaction.block_time.is_none() {
                             let r_bank_forks = self.bank_forks.read().unwrap();

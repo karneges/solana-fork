@@ -3893,7 +3893,7 @@ pub mod rpc_full {
             meta: Self::Metadata,
             address: String,
             config: Option<RpcSignaturesForAddressConfig>,
-        ) -> BoxFuture<Option<Vec<RpcConfirmedTransactionStatusWithSignature>>> {
+        ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>> {
             let RpcSignaturesForAddressConfig {
                 before,
                 until,

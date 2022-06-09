@@ -3362,7 +3362,7 @@ pub mod rpc_full {
             commitment: Option<CommitmentConfig>,
         ) -> BoxFuture<Result<Vec<Slot>>>;
 
-        #[rpc(meta, name = "getTransaction")]
+        #[rpc(meta, name = "getTransaction1")]
         fn get_transaction(
             &self,
             meta: Self::Metadata,
@@ -3378,7 +3378,7 @@ pub mod rpc_full {
             config: Option<RpcSignaturesForAddressConfig>,
         ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>>;
 
-        #[rpc(meta, name = "getFirstAvailableBlock")]
+        #[rpc(meta, name = "getTransactionsForAddress")]
         fn get_transaction_for_address(
             &self,
             meta: Self::Metadata,

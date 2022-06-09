@@ -3969,7 +3969,9 @@ pub mod rpc_full {
                                 )
                                 .await;
                             transaction.unwrap()
-                        });
+                        })
+                        .collect::<Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>>().try_into()
+                        .unwrap();
                     transactions
                 }),
                 _ => {}

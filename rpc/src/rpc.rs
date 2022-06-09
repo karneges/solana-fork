@@ -3973,7 +3973,7 @@ pub mod rpc_full {
                                 transaction.unwrap()
                             })
 
-                    ).await.to_vec();
+                    ).await;
                     transactions
                 }),
                 _ => {}

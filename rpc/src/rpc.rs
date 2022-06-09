@@ -3927,6 +3927,7 @@ pub mod rpc_full {
             address: String,
             config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
         ) -> BoxFuture<Vec<Option<EncodedConfirmedTransactionWithStatusMeta>>> {
+           let default:Vec<Option<EncodedConfirmedTransactionWithStatusMeta>>;
             let RpcTransactionsForAddressConfig {
                 before,
                 until,
@@ -3939,7 +3940,7 @@ pub mod rpc_full {
             let verification =
                 verify_and_parse_signatures_for_address_params(address, before, until, limit);
             match verification {
-                Err(err) => Box::pin(future::err(err)),
+                Err(err) => default,
                 Ok((address, before, until, limit)) => Box::pin(async move {
                     let signatures = meta
                         .get_signatures_for_address(

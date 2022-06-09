@@ -3379,12 +3379,12 @@ pub mod rpc_full {
         ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>>;
 
         #[rpc(meta, name = "getTransactionsForAddress")]
-        fn get_signatures_for_address1(
+        fn get_transaction_for_address(
             &self,
             meta: Self::Metadata,
             address: String,
-            config: Option<RpcSignaturesForAddressConfig>,
-        ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>>;
+            config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
+        ) -> String;
 
         #[rpc(meta, name = "getFirstAvailableBlock")]
         fn get_first_available_block(&self, meta: Self::Metadata) -> BoxFuture<Result<Slot>>;
@@ -3920,39 +3920,6 @@ pub mod rpc_full {
                 }),
             }
         }
-        fn get_signatures_for_address1(
-            &self,
-            meta: Self::Metadata,
-            address: String,
-            config: Option<RpcSignaturesForAddressConfig>,
-        ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>> {
-            let RpcSignaturesForAddressConfig {
-                before,
-                until,
-                limit,
-                commitment,
-                min_context_slot,
-            } = config.unwrap_or_default();
-            let verification =
-                verify_and_parse_signatures_for_address_params(address, before, until, limit);
-
-            match verification {
-                Err(err) => Box::pin(future::err(err)),
-                Ok((address, before, until, limit)) => Box::pin(async move {
-                    meta.get_signatures_for_address(
-                        address,
-                        before,
-                        until,
-                        limit,
-                        RpcContextConfig {
-                            commitment,
-                            min_context_slot,
-                        },
-                    )
-                        .await
-                }),
-            }
-        }
         // fn get_transaction_for_address(
         //     &self,
         //     meta: Self::Metadata,
@@ -4009,7 +3976,14 @@ pub mod rpc_full {
         //         _ => {}
         //     }
         // }
-
+        fn get_transaction_for_address(
+            &self,
+            meta: Self::Metadata,
+            address: String,
+            config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
+        ) -> String {
+            return "HI!"
+        }
         fn get_first_available_block(&self, meta: Self::Metadata) -> BoxFuture<Result<Slot>> {
             debug!("get_first_available_block rpc request received");
             Box::pin(async move { Ok(meta.get_first_available_block().await) })

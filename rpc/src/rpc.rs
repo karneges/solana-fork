@@ -3382,8 +3382,8 @@ pub mod rpc_full {
             &self,
             meta: Self::Metadata,
             address: String,
-            config: Option<RpcSignaturesForAddressConfig>,
-        ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>>;
+            config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
+        ) -> BoxFuture<Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>>
         #[rpc(meta, name = "getFirstAvailableBlock")]
         fn get_first_available_block(&self, meta: Self::Metadata) -> BoxFuture<Result<Slot>>;
 

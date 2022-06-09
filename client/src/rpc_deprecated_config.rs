@@ -64,6 +64,12 @@ impl From<RpcConfirmedBlockConfig> for RpcEncodingConfigWrapper<RpcConfirmedBloc
     }
 }
 
+impl From<RpcTransactionConfig> for RpcEncodingConfigWrapper<RpcTransactionConfig> {
+    fn from(config: RpcTransactionConfig) -> Self {
+        RpcEncodingConfigWrapper::Current(Some(config))
+    }
+}
+
 impl From<RpcConfirmedBlockConfig> for RpcBlockConfig {
     fn from(config: RpcConfirmedBlockConfig) -> Self {
         Self {

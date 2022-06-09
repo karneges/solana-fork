@@ -3383,7 +3383,7 @@ pub mod rpc_full {
             meta: Self::Metadata,
             address: String,
             config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
-        ) -> BoxFuture<Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>>
+        ) -> BoxFuture<Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>>;
         #[rpc(meta, name = "getFirstAvailableBlock")]
         fn get_first_available_block(&self, meta: Self::Metadata) -> BoxFuture<Result<Slot>>;
 

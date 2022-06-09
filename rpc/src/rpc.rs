@@ -3939,7 +3939,7 @@ pub mod rpc_full {
             let verification =
                 verify_and_parse_signatures_for_address_params(address, before, until, limit);
             match verification {
-                // Err(err) => Box::pin(future::err(err)),
+                Err(err) => Box::pin(future::err(err)),
                 Ok((address, before, until, limit)) => Box::pin(async move {
                     let signatures = meta
                         .get_signatures_for_address(
@@ -3977,7 +3977,6 @@ pub mod rpc_full {
                     ).await;
                     transactions
                 }),
-                _ => {}
             }
         }
 

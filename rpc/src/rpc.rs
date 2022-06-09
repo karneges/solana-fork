@@ -1495,7 +1495,7 @@ impl JsonRpcRequestProcessor {
 
             match confirmed_transaction.unwrap_or(None) {
                 Some(mut confirmed_transaction) => {
-                    if commitment.is_confirmed()
+                    if (commitment.is_confirmed() || commitment.is_processed())
                         && confirmed_bank // should be redundant
                             .status_cache_ancestors()
                             .contains(&confirmed_transaction.slot)

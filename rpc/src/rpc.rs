@@ -2137,20 +2137,20 @@ impl JsonRpcRequestProcessor {
         }
     }
 
-    // fn get_latest_blockhash(&self, config: RpcContextConfig) -> Result<RpcResponse<RpcBlockhash>> {
-    //     let bank = self.get_bank_with_config(config)?;
-    //     let blockhash = bank.last_blockhash();
-    //     let last_valid_block_height = bank
-    //         .get_blockhash_last_valid_block_height(&blockhash)
-    //         .expect("bank blockhash queue should contain blockhash");
-    //     Ok(new_response(
-    //         &bank,
-    //         RpcBlockhash {
-    //             blockhash: blockhash.to_string(),
-    //             last_valid_block_height,
-    //         },
-    //     ))
-    // }
+    fn get_latest_blockhash(&self, config: RpcContextConfig) -> Result<RpcResponse<RpcBlockhash>> {
+        let bank = self.get_bank_with_config(config)?;
+        let blockhash = bank.last_blockhash();
+        let last_valid_block_height = bank
+            .get_blockhash_last_valid_block_height(&blockhash)
+            .expect("bank blockhash queue should contain blockhash");
+        Ok(new_response(
+            &bank,
+            RpcBlockhash {
+                blockhash: blockhash.to_string(),
+                last_valid_block_height,
+            },
+        ))
+    }
 
     fn is_blockhash_valid(
         &self,
@@ -3378,7 +3378,7 @@ pub mod rpc_full {
             config: Option<RpcSignaturesForAddressConfig>,
         ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>>;
 
-        #[rpc(meta, name = "getLatestBlockhash")]
+        #[rpc(meta, name = "getFirstAvailableBlock")]
         fn get_transaction_for_address(
             &self,
             meta: Self::Metadata,
@@ -3389,12 +3389,12 @@ pub mod rpc_full {
         #[rpc(meta, name = "getFirstAvailableBlock")]
         fn get_first_available_block(&self, meta: Self::Metadata) -> BoxFuture<Result<Slot>>;
 
-        // #[rpc(meta, name = "getLatestBlockhash")]
-        // fn get_latest_blockhash(
-        //     &self,
-        //     meta: Self::Metadata,
-        //     config: Option<RpcContextConfig>,
-        // ) -> Result<RpcResponse<RpcBlockhash>>;
+        #[rpc(meta, name = "getLatestBlockhash")]
+        fn get_latest_blockhash(
+            &self,
+            meta: Self::Metadata,
+            config: Option<RpcContextConfig>,
+        ) -> Result<RpcResponse<RpcBlockhash>>;
 
         #[rpc(meta, name = "isBlockhashValid")]
         fn is_blockhash_valid(
@@ -4006,14 +4006,14 @@ pub mod rpc_full {
             Box::pin(async move { meta.get_inflation_reward(addresses, config).await })
         }
 
-        // fn get_latest_blockhash(
-        //     &self,
-        //     meta: Self::Metadata,
-        //     config: Option<RpcContextConfig>,
-        // ) -> Result<RpcResponse<RpcBlockhash>> {
-        //     debug!("get_latest_blockhash rpc request received");
-        //     meta.get_latest_blockhash(config.unwrap_or_default())
-        // }
+        fn get_latest_blockhash(
+            &self,
+            meta: Self::Metadata,
+            config: Option<RpcContextConfig>,
+        ) -> Result<RpcResponse<RpcBlockhash>> {
+            debug!("get_latest_blockhash rpc request received");
+            meta.get_latest_blockhash(config.unwrap_or_default())
+        }
 
         fn is_blockhash_valid(
             &self,

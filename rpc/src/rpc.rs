@@ -3940,7 +3940,7 @@ pub mod rpc_full {
             let verification =
                 verify_and_parse_signatures_for_address_params(address, before, until, limit);
             match verification {
-                Err(err) => Box::pin({
+                Err(err) => Box::pin(async{
                     default
                                      }),
                 Ok((address, before, until, limit)) => Box::pin(async move {

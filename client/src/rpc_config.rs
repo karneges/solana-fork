@@ -215,6 +215,21 @@ pub struct RpcSignaturesForAddressConfig {
     pub min_context_slot: Option<Slot>,
 }
 
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RpcTransactionsForAddressConfig {
+    pub before: Option<String>, // Signature as base-58 string
+    pub until: Option<String>,  // Signature as base-58 string
+    pub limit: Option<usize>,
+    pub encoding: Option<UiTransactionEncoding>,
+
+    #[serde(flatten)]
+    pub commitment: Option<CommitmentConfig>,
+    pub min_context_slot: Option<Slot>,
+    pub max_supported_transaction_version: Option<u8>,
+
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RpcEncodingConfigWrapper<T> {

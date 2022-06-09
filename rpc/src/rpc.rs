@@ -3370,21 +3370,21 @@ pub mod rpc_full {
             config: Option<RpcEncodingConfigWrapper<RpcTransactionConfig>>,
         ) -> BoxFuture<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>;
 
-        // #[rpc(meta, name = "getSignaturesForAddress")]
-        // fn get_signatures_for_address(
-        //     &self,
-        //     meta: Self::Metadata,
-        //     address: String,
-        //     config: Option<RpcSignaturesForAddressConfig>,
-        // ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>>;
-
-        #[rpc(meta, name = "getTransactionsForAddress")]
-        fn get_transaction_for_address(
+        #[rpc(meta, name = "getSignaturesForAddress")]
+        fn get_signatures_for_address(
             &self,
             meta: Self::Metadata,
             address: String,
-            config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
-        ) -> BoxFuture<Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>>;
+            config: Option<RpcSignaturesForAddressConfig>,
+        ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>>;
+
+        // #[rpc(meta, name = "getTransactionsForAddress")]
+        // fn get_transaction_for_address(
+        //     &self,
+        //     meta: Self::Metadata,
+        //     address: String,
+        //     config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
+        // ) -> BoxFuture<Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>>;
 
         #[rpc(meta, name = "getFirstAvailableBlock")]
         fn get_first_available_block(&self, meta: Self::Metadata) -> BoxFuture<Result<Slot>>;

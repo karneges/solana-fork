@@ -54,6 +54,7 @@ stream-cancel = "0.8.1"
 thiserror = "1.0"
 tokio = { version = "~1.14.1", features = ["full"] }
 tokio-util = { version = "0.6", features = ["codec", "compat"] }
+features ="0.10.0"
 
 [dev-dependencies]
 serial_test = "0.6.0"
@@ -61,7 +62,7 @@ solana-address-lookup-table-program = { path = "../programs/address-lookup-table
 solana-net-utils = { path = "../net-utils", version = "=1.11.0" }
 solana-stake-program = { path = "../programs/stake", version = "=1.11.0" }
 symlink = "0.1.0"
-features ="0.10.0"
+
 
 [lib]
 crate-type = ["lib"]

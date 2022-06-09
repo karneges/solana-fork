@@ -1568,15 +1568,11 @@ impl JsonRpcRequestProcessor {
                 .unwrap()
                 .highest_confirmed_root();
             let highest_slot = if commitment.is_confirmed() || commitment.is_processed() {
-                let updated_config = RpcContextConfig {
-                    commitment: Option::from(CommitmentConfig::confirmed()),
-                    min_context_slot:config.min_context_slot,
-                };
-                let confirmed_bank = self.get_bank_with_config(updated_config)?;
                 if commitment.is_confirmed() {
+                    let confirmed_bank = self.get_bank_with_config(config)?;
                     confirmed_bank.slot()
                 } else {
-                    confirmed_bank.slot().add(10)
+                    self.get_slot(config).unwrap()
                 }
             } else {
                 let min_context_slot = config.min_context_slot.unwrap_or_default();

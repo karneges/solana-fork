@@ -1,6 +1,9 @@
 //! The `rpc` module implements the Solana RPC interface.
 
 use std::ops::Add;
+extern crate futures;
+
+use futures::future;
 use {
     crate::{
         max_slots::MaxSlots, optimistically_confirmed_bank_tracker::OptimisticallyConfirmedBank,

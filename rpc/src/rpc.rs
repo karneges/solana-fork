@@ -3379,7 +3379,7 @@ pub mod rpc_full {
             config: Option<RpcSignaturesForAddressConfig>,
         ) -> BoxFuture<Result<Vec<RpcConfirmedTransactionStatusWithSignature>>>;
 
-        // #[rpc(meta, name = "getTransactionsForAddress")]
+        #[rpc(meta, name = "getTransactionsForAddress")]
         fn get_transaction_for_address(
             &self,
             meta: Self::Metadata,

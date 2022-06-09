@@ -3385,7 +3385,7 @@ pub mod rpc_full {
             meta: Self::Metadata,
             address: String,
             config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
-        ) -> BoxFuture<Vec<Result<Option<EncodedConfirmedTransactionWithStatusMeta>>>>;
+        ) -> BoxFuture<Vec<Option<EncodedConfirmedTransactionWithStatusMeta>>>;
 
         #[rpc(meta, name = "getFirstAvailableBlock")]
         fn get_first_available_block(&self, meta: Self::Metadata) -> BoxFuture<Result<Slot>>;
@@ -3952,6 +3952,7 @@ pub mod rpc_full {
                                 min_context_slot,
                             },
                         )
+
                         .await;
 
                     let transactions:Vec<Option<EncodedConfirmedTransactionWithStatusMeta>> = join_all(

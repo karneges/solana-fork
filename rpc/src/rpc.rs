@@ -3926,7 +3926,7 @@ pub mod rpc_full {
             meta: Self::Metadata,
             address: String,
             config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
-        ) -> BoxFuture<Vec<Option<Option<EncodedConfirmedTransactionWithStatusMeta>>>> {
+        ) -> BoxFuture<Vec<Option<EncodedConfirmedTransactionWithStatusMeta>>> {
             let RpcTransactionsForAddressConfig {
                 before,
                 until,
@@ -3954,7 +3954,7 @@ pub mod rpc_full {
                         )
                         .await;
 
-                    let transactions:Vec<Option<Option<EncodedConfirmedTransactionWithStatusMeta>>> = join_all(
+                    let transactions:Vec<Option<EncodedConfirmedTransactionWithStatusMeta>> = join_all(
                         signatures
                             .unwrap()
                             .iter()

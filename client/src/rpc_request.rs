@@ -40,6 +40,7 @@ pub enum RpcRequest {
         note = "Please use RpcRequest::GetTransaction instead"
     )]
     GetConfirmedTransaction,
+    GetTransactionsForAddress,
     GetEpochInfo,
     GetEpochSchedule,
     #[deprecated(
@@ -147,6 +148,7 @@ impl fmt::Display for RpcRequest {
             RpcRequest::GetInflationRate => "getInflationRate",
             RpcRequest::GetInflationReward => "getInflationReward",
             RpcRequest::GetLargestAccounts => "getLargestAccounts",
+            RpcRequest::GetTransactionsForAddress => "getTransactionsForAddress",
             RpcRequest::GetLatestBlockhash => "getLatestBlockhash",
             RpcRequest::GetLeaderSchedule => "getLeaderSchedule",
             RpcRequest::GetMaxRetransmitSlot => "getMaxRetransmitSlot",

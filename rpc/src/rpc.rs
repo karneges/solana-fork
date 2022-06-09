@@ -3969,8 +3969,7 @@ pub mod rpc_full {
                                 )
                                 .await;
                             transaction.unwrap()
-                        })
-                        .collect();
+                        });
                     transactions
                 }),
                 _ => {}

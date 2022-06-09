@@ -1707,6 +1707,61 @@ impl JsonRpcRequestProcessor {
         slot
     }
 
+
+    pub async fn get_transaction_for_address(
+        &self,
+        address: String,
+        config: Option<RpcTransactionsForAddressConfig>,
+    ) -> BoxFuture<Vec<Option<EncodedConfirmedTransactionWithStatusMeta>>> {
+        let default:Vec<Option<EncodedConfirmedTransactionWithStatusMeta>> = vec![];
+
+        let unwrapped = config.unwrap();
+        let verification =
+            verify_and_parse_signatures_for_address_params(address, unwrapped.before, unwrapped.until, unwrapped.limit);
+        match verification {
+            Err(err) => Box::pin(async{
+                default
+            }),
+            Ok((address, before, until, limit)) => Box::pin(async move {
+                let signatures = self
+                    .get_signatures_for_address(
+                        address,
+                        before,
+                        until,
+                        limit,
+                        RpcContextConfig {
+                            commitment:unwrapped.commitment,
+                            min_context_slot:unwrapped.min_context_slot,
+                        },
+                    )
+
+                    .await;
+
+                let transactions:Vec<Option<EncodedConfirmedTransactionWithStatusMeta>> = join_all(
+                    signatures
+                        .unwrap()
+                        .iter()
+                        .map(|s| async {
+                            let verif = verify_signature(&s.signature);
+                            let transaction = self
+                                .get_transaction(
+                                    verif.unwrap(),
+                                    Some(RpcEncodingConfigWrapper::from(RpcTransactionConfig {
+                                        max_supported_transaction_version:unwrapped.max_supported_transaction_version,
+                                        encoding:unwrapped.encoding,
+                                        commitment:unwrapped.commitment,
+                                    })),
+                                )
+                                .await;
+                            transaction.unwrap()
+                        })
+
+                ).await;
+                transactions
+            }),
+        }
+    }
+
     pub fn get_stake_activation(
         &self,
         pubkey: &Pubkey,
@@ -3928,15 +3983,7 @@ pub mod rpc_full {
             config: Option<RpcTransactionsForAddressConfig>,
         ) -> BoxFuture<Vec<Option<EncodedConfirmedTransactionWithStatusMeta>>> {
            let default:Vec<Option<EncodedConfirmedTransactionWithStatusMeta>> = vec![];
-            // let RpcTransactionsForAddressConfig {
-            //     before,
-            //     until,
-            //     limit,
-            //     commitment,
-            //     min_context_slot,
-            //     max_supported_transaction_version,
-            //     encoding,
-            // } = config.unwrap_or_default();
+
             let unwrapped = config.unwrap();
             let verification =
                 verify_and_parse_signatures_for_address_params(address, unwrapped.before, unwrapped.until, unwrapped.limit);

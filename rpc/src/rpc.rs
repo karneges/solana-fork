@@ -3927,7 +3927,7 @@ pub mod rpc_full {
             address: String,
             config: Option<RpcEncodingConfigWrapper<RpcTransactionsForAddressConfig>>,
         ) -> BoxFuture<Vec<Option<EncodedConfirmedTransactionWithStatusMeta>>> {
-           let default:Vec<Option<EncodedConfirmedTransactionWithStatusMeta>>;
+           let default:Vec<Option<EncodedConfirmedTransactionWithStatusMeta>> = vec![];
             let RpcTransactionsForAddressConfig {
                 before,
                 until,

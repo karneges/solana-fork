@@ -1586,28 +1586,53 @@ impl JsonRpcRequestProcessor {
         // check_is_at_least_confirmed(commitment)?;
 
         if self.config.enable_rpc_transaction_history {
-            let highest_confirmed_root = self
-                .block_commitment_cache
-                .read()
-                .unwrap()
-                .highest_confirmed_root();
-            let highest_slot = if commitment.is_confirmed() || commitment.is_processed() {
-                if commitment.is_confirmed() {
+            let highest_slot = match commitment.commitment {
+                CommitmentLevel::Processed => {
+                  let processed_bank =  self.bank(Some(CommitmentConfig::processed()));
+                    processed_bank.slot()
+                }
+                CommitmentLevel::Confirmed => {
                     let confirmed_bank = self.get_bank_with_config(config)?;
                     confirmed_bank.slot()
-                } else {
-                    self.get_slot(config).unwrap()
                 }
-            } else {
-                let min_context_slot = config.min_context_slot.unwrap_or_default();
-                if highest_confirmed_root < min_context_slot {
-                    return Err(RpcCustomError::MinContextSlotNotReached {
-                        context_slot: highest_confirmed_root,
+                _ => {
+                    let highest_confirmed_root = self
+                        .block_commitment_cache
+                        .read()
+                        .unwrap()
+                        .highest_confirmed_root();
+                    let min_context_slot = config.min_context_slot.unwrap_or_default();
+                    if highest_confirmed_root < min_context_slot {
+                        return Err(RpcCustomError::MinContextSlotNotReached {
+                            context_slot: highest_confirmed_root,
+                        }
+                            .into());
                     }
-                    .into());
+                    highest_confirmed_root
                 }
-                highest_confirmed_root
             };
+            // let highest_confirmed_root = self
+            //     .block_commitment_cache
+            //     .read()
+            //     .unwrap()
+            //     .highest_confirmed_root();
+            // let highest_slot = if commitment.is_confirmed() || commitment.is_processed() {
+            //     if commitment.is_confirmed() {
+            //         let confirmed_bank = self.get_bank_with_config(config)?;
+            //         confirmed_bank.slot()
+            //     } else {
+            //         self.get_slot(config).unwrap()
+            //     }
+            // } else {
+            //     let min_context_slot = config.min_context_slot.unwrap_or_default();
+            //     if highest_confirmed_root < min_context_slot {
+            //         return Err(RpcCustomError::MinContextSlotNotReached {
+            //             context_slot: highest_confirmed_root,
+            //         }
+            //         .into());
+            //     }
+            //     highest_confirmed_root
+            // };
 
             let SignatureInfosForAddress {
                 infos: mut results,

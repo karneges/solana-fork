@@ -1608,6 +1608,11 @@ impl JsonRpcRequestProcessor {
             //     }
             //     highest_confirmed_root
             // };
+            let highest_confirmed_root = self
+                .block_commitment_cache
+                .read()
+                .unwrap()
+                .highest_confirmed_root();
             let highest_slot = match commitment.commitment {
                 CommitmentLevel::Processed => {
                     let processed_bank =  self.bank(Some(CommitmentConfig::processed()));
@@ -1618,11 +1623,7 @@ impl JsonRpcRequestProcessor {
                     confirmed_bank.slot()
                 }
                 _ => {
-                    let highest_confirmed_root = self
-                        .block_commitment_cache
-                        .read()
-                        .unwrap()
-                        .highest_confirmed_root();
+
                     let min_context_slot = config.min_context_slot.unwrap_or_default();
                     if highest_confirmed_root < min_context_slot {
                         return Err(RpcCustomError::MinContextSlotNotReached {
